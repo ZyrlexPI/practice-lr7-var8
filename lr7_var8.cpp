@@ -33,11 +33,32 @@ void init_f(int a[N][N]) //Инициализация матрицы A из файла
     else cout << "Ошибка открытия файла. \n";
 }
 
-void output(int a[][N], void (*pfunc)(int[N][N])) //Вывод на экран и в файл элементов матрицы А
+int* mas_x(int(*a)[N], int* x,  //Заполнение массива X
+    void (*pfunc)(int[N][N]))
+{
+    int i, k, md, dd;
+    pfunc(a);//Вызов через указатель одной из двух функций ввода элементов a
+    k = 4;
+    md = 4;
+    dd = 0;
+    while (k > -1)
+    {
+        if (a[k][md] > a[k][dd]) //сравнение элементов главной и побочной диагонали
+        {
+            x[k] = 1;
+        }
+        else x[k] = -1;
+        k = k - 1;
+        md--;
+        dd++;
+    }
+    return x;
+}
+
+void output(const int x[], const int a[][N]) //Вывод на экран и в файл элементов матрицы А
 {
     int i, j;
     FILE* fp;
-    pfunc(a);
     cout << "Матрица А:\n";
     for (i = 0;i < N;i++)
     {
@@ -45,6 +66,10 @@ void output(int a[][N], void (*pfunc)(int[N][N])) //Вывод на экран и в файл элем
             cout << a[i][j] << " ";
         cout << "\n";
     }
+    cout << "Массив Х:\n";
+    for (i = 0;i < N;i++)
+        cout << x[i] << " ";
+    cout << "\n";
     fopen_s(&fp, "out.txt", "w");
     if (fp)
     {
@@ -55,6 +80,10 @@ void output(int a[][N], void (*pfunc)(int[N][N])) //Вывод на экран и в файл элем
                 fprintf(fp, "%5d", a[i][j]);
             fprintf(fp, "\n");
         }
+        fprintf(fp, "Маccив X:\n");
+        for (i = 0;i < N;i++)
+            fprintf(fp, "%5d", x[i]);
+        fprintf(fp, "\n");
         fclose(fp);
     }
     else cout << "Ошибка открытия. \n";
@@ -73,6 +102,6 @@ int main()
     } while (v != 1 && v != 2);
     if (v == 1) pfunc = &init;// Присваивание указателю адреса одной из функций 
     else pfunc = &init_f;
-    output(a,pfunc);
+    output(mas_x(a, x, pfunc), a);
     _getch();
 }
