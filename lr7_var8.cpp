@@ -55,7 +55,25 @@ int* mas_x(int(*a)[N], int* x,  //Заполнение массива X
     return x;
 }
 
-void output(const int x[], const int a[][N]) //Вывод на экран и в файл элементов матрицы А
+int elem_y(int y, const int a[][N], int i) //Поиск величины Y
+{
+    if (i < N)
+    {
+        y = elem_y(y, a, i + 1);//Рекурсивная функция
+        if (a[i][0] % 2 != 0)
+        {
+            y = y + 1;
+        }
+        return y;
+    }
+    else
+    {
+        y = 0;
+        return y;
+    }
+}
+
+void output(const int  y, const int x[], const int a[][N]) //Вывод на экран и в файл элементов матрицы А
 {
     int i, j;
     FILE* fp;
@@ -70,6 +88,12 @@ void output(const int x[], const int a[][N]) //Вывод на экран и в файл элементов
     for (i = 0;i < N;i++)
         cout << x[i] << " ";
     cout << "\n";
+    if (y != 0)
+    {
+        cout << "Величина Y: " << y;
+    }
+    else
+        cout << "Нет нечётных элементов в первом столбце матрицы.";
     fopen_s(&fp, "out.txt", "w");
     if (fp)
     {
@@ -84,6 +108,13 @@ void output(const int x[], const int a[][N]) //Вывод на экран и в файл элементов
         for (i = 0;i < N;i++)
             fprintf(fp, "%5d", x[i]);
         fprintf(fp, "\n");
+        if (y != 0)
+        {
+            fprintf(fp, "Величина Y:");
+            fprintf(fp, "%3d", y);
+        }
+        else
+            fprintf(fp, "Нет нечётных элементов в первом столбце матрицы.");
         fclose(fp);
     }
     else cout << "Ошибка открытия. \n";
@@ -92,9 +123,9 @@ void output(const int x[], const int a[][N]) //Вывод на экран и в файл элементов
 int main()
 {
     setlocale(LC_CTYPE, "");
-    int a[N][N], x[N], y, v, p;
+    int a[N][N], x[N], y, v;
     void (*pfunc)(int[N][N]);
-    y = p = 0;
+    y = 0;
     do
     {
         cout << "Инициализация матрицы:\n1 - с клавиатуры\n2 - из файла\nВаш выбор: ";
@@ -102,6 +133,6 @@ int main()
     } while (v != 1 && v != 2);
     if (v == 1) pfunc = &init;// Присваивание указателю адреса одной из функций 
     else pfunc = &init_f;
-    output(mas_x(a, x, pfunc), a);
+    output(elem_y(y, a, 0), mas_x(a, x, pfunc), a);
     _getch();
 }
