@@ -5,10 +5,10 @@
 #define N 5
 using namespace std;
 
-void init(int a[N][N])    //Инициализация матрицы A с клавиатуры
+void init(int a[N][N])    //Initializing matrix A from the keyboard
 {
     int i, j;
-    cout << "Введите элементы матрицы А: \n";
+    cout << "Enter the matrix elements A: \n";
     for (i = 0;i < N;i++)
         for (j = 0;j < N;j++)
         {
@@ -18,7 +18,7 @@ void init(int a[N][N])    //Инициализация матрицы A с клавиатуры
 
 }
 
-void init_f(int a[N][N]) //Инициализация матрицы A из файла
+void init_f(int a[N][N]) //Initializing matrix A from a file
 {
     int i, j;
     FILE* fp;
@@ -30,20 +30,20 @@ void init_f(int a[N][N]) //Инициализация матрицы A из файла
                 fscanf_s(fp, "%d", &a[i][j]);
         fclose(fp);
     }
-    else cout << "Ошибка открытия файла. \n";
+    else cout << "Error opening the file. \n";
 }
 
-int* mas_x(int(*a)[N], int* x,  //Заполнение массива X
+int* mas_x(int(*a)[N], int* x,  //Filling in the x array
     void (*pfunc)(int[N][N]))
 {
     int i, k, md, dd;
-    pfunc(a);//Вызов через указатель одной из двух функций ввода элементов a
+    pfunc(a);//Calling one of the two matrix a initialization functions via a pointer
     k = 4;
     md = 4;
     dd = 0;
     while (k > -1)
     {
-        if (a[k][md] > a[k][dd]) //сравнение элементов главной и побочной диагонали
+        if (a[k][md] > a[k][dd]) //A comparison of the elements of the primary and secondary diagonal
         {
             x[k] = 1;
         }
@@ -55,11 +55,11 @@ int* mas_x(int(*a)[N], int* x,  //Заполнение массива X
     return x;
 }
 
-int elem_y(int y, const int a[][N], int i) //Поиск величины Y
+int elem_y(int y, const int a[][N], int i) //Search for the y value
 {
     if (i < N)
     {
-        y = elem_y(y, a, i + 1);//Рекурсивная функция
+        y = elem_y(y, a, i + 1);//Recursive function
         if (a[i][0] % 2 != 0)
         {
             y = y + 1;
@@ -77,47 +77,47 @@ void output(const int  y, const int x[], const int a[][N]) //Вывод на экран и в 
 {
     int i, j;
     FILE* fp;
-    cout << "Матрица А:\n";
+    cout << "The Matrix A:\n";
     for (i = 0;i < N;i++)
     {
         for (j = 0;j < N;j++)
             cout << a[i][j] << " ";
         cout << "\n";
     }
-    cout << "Массив Х:\n";
+    cout << "The Array X:\n";
     for (i = 0;i < N;i++)
         cout << x[i] << " ";
     cout << "\n";
     if (y != 0)
     {
-        cout << "Величина Y: " << y;
+        cout << "The Value Of Y: " << y;
     }
     else
-        cout << "Нет нечётных элементов в первом столбце матрицы.";
+        cout << "There are no odd elements in the first column of the matrix.";
     fopen_s(&fp, "out.txt", "w");
     if (fp)
     {
-        fprintf(fp, "Матрица А:\n");
+        fprintf(fp, "The Matrix A:\n");
         for (i = 0;i < N;i++)
         {
             for (j = 0;j < N;j++)
                 fprintf(fp, "%5d", a[i][j]);
             fprintf(fp, "\n");
         }
-        fprintf(fp, "Маccив X:\n");
+        fprintf(fp, "The Array X:\n");
         for (i = 0;i < N;i++)
             fprintf(fp, "%5d", x[i]);
         fprintf(fp, "\n");
         if (y != 0)
         {
-            fprintf(fp, "Величина Y:");
+            fprintf(fp, "The Value Of Y:");
             fprintf(fp, "%3d", y);
         }
         else
-            fprintf(fp, "Нет нечётных элементов в первом столбце матрицы.");
+            fprintf(fp, "There are no odd elements in the first column of the matrix.");
         fclose(fp);
     }
-    else cout << "Ошибка открытия. \n";
+    else cout << "Opening error. \n";
 }
 
 int main()
@@ -128,10 +128,10 @@ int main()
     y = 0;
     do
     {
-        cout << "Инициализация матрицы:\n1 - с клавиатуры\n2 - из файла\nВаш выбор: ";
+        cout << "Initializing the matrix:\n1-from the keyboard\n2 - from the file\nyour choice:";
         cin >> v;
     } while (v != 1 && v != 2);
-    if (v == 1) pfunc = &init;// Присваивание указателю адреса одной из функций 
+    if (v == 1) pfunc = &init;//Assigning an address pointer to one of the functions
     else pfunc = &init_f;
     output(elem_y(y, a, 0), mas_x(a, x, pfunc), a);
     _getch();
